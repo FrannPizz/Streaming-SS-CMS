@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+        compileOnly 'org.apache.spark:spark-core_2.12:3.5.0'
+        compileOnly 'org.apache.spark:spark-streaming_2.12:3.5.0'
+}
+
+jar {
+    zip64 = true
+    archiveFileName = 'G35HW2.jar'
+    manifest {
+        attributes 'Main-Class': 'G35HW2'
+    }
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.withType(JavaExec).configureEach {
+    jvmArgs = [
+            '--add-opens', 'java.base/sun.nio.ch=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.nio=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.util=ALL-UNNAMED'
+    ]
+}
